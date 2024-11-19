@@ -14,38 +14,38 @@ class ImageDepthNet(nn.Module):
         self.MCMF3 = Mamba_fusion_enhancement_module(64)
         # Encoder
         self.rgb_backbone = T2t_vit_t_14(pretrained=True, args=args)
-        self.depth_backbone = T2t_Vision_Mamba(pretrained=False, args=args)
+        self.polar_backbone = T2t_Vision_Mamba(pretrained=False, args=args)
 
         self.mamba = ViMamba(patch_size=16, embed_dim=384, depth=12, rms_norm=True, residual_in_fp32=True, fused_add_norm=True, final_pool_type='mean', if_abs_pos_embed=True, if_rope=False, if_rope_residual=False, bimamba_type="v2", if_cls_token=True, if_devide_out=True, use_middle_cls_token=True)
 
         self.decoder = Decoder()
 
 
-    def forward(self, image_Input, depth_Input):
+    def forward(self, image_Input, polar_Input):
         B, _, _, _ = image_Input.shape
 
         feature_map1 = self.rgb_backbone(image_Input, layer_flag=1)
-        dep_layer3_vit, _, _, dep_layer1, dep_layer2, dep_layer3 = self.depth_backbone(depth_Input)
+        pol_layer3_vit, _, _, pol_layer1, pol_layer2, pol_layer3 = self.polar_backbone(polar_Input)
 
-        img_cmf1 = self.MCMF1(feature_map1, dep_layer1)
+        img_cmf1 = self.MCMF1(feature_map1, pol_layer1)
         img_layer_cat1 = feature_map1 + img_cmf1
         feature_map2, rgb_fea_1_4 = self.rgb_backbone(img_layer_cat1, layer_flag=2)
 
-        img_cmf2 = self.MCMF2(feature_map2, dep_layer2)
+        img_cmf2 = self.MCMF2(feature_map2, pol_layer2)
         img_layer_cat2 = feature_map2 + img_cmf2
         feature_map3, rgb_fea_1_8 = self.rgb_backbone(img_layer_cat2, layer_flag=3)
 
-        img_cmf3 = self.MCMF3(feature_map3, dep_layer3)
+        img_cmf3 = self.MCMF3(feature_map3, pol_layer3)
         img_layer_cat3 = feature_map3 + img_cmf3
 
         img_layer3_vit = self.rgb_backbone(img_layer_cat3, image_Input, layer_flag=4)
 
-        rgb_fea_1_16, depth_fea_1_16 = self.mamba(img_layer3_vit, dep_layer3_vit)
+        rgb_fea_1_16, polar_fea_1_16 = self.mamba(img_layer3_vit, pol_layer3_vit)
 
         rgb_fea_1_16 = rgb_fea_1_16.transpose(1, 2).reshape(B, 384, 14, 14)
-        depth_fea_1_16 = depth_fea_1_16.transpose(1, 2).reshape(B, 384, 14, 14)
+        polar_fea_1_16 = polar_fea_1_16.transpose(1, 2).reshape(B, 384, 14, 14)
 
-        outputs = self.decoder.forward(rgb_fea_1_16, depth_fea_1_16,  feature_map3, feature_map2, feature_map1)
+        outputs = self.decoder.forward(rgb_fea_1_16, polar_fea_1_16,  feature_map3, feature_map2, feature_map1)
 
 
         return outputs
