@@ -4,4 +4,9 @@ This project provides the code and datasets for 'STAMF: Synergistic Transformer 
 Dataset: 
 Baidu Pan：https://pan.baidu.com/s/1YjRaEdLTKTAggES3v1ziuA password：mmqw
 
+Weight:
+Baidu Pan: https://pan.baidu.com/s/1MoqHYv-Pp2DN3eBtLnB77w?pwd=rb27 password：rb27
+
+
+
 After the article is accepted for publication, we will make all the datasets open source.
