@@ -80,8 +80,8 @@ def test_net(args):
             # if not os.path.exists(save_test_path):
             #     os.makedirs(save_test_path)
             # output_s.save(os.path.join(save_test_path, filename + '.png'))
-            d1 = F.upsample(d1, size=(image_h,image_w), mode='bilinear', align_corners=False)
-            # d1 = F.upsample(d1, size=(512, 612), mode='bilinear', align_corners=False)
+
+            d1 = F.upsample(d1, size=(512, 612), mode='bilinear', align_corners=False)
             d1 = d1.sigmoid().data.cpu().numpy().squeeze()
             d1 = (d1 - d1.min()) / (d1.max() - d1.min() + 1e-8)
             dataset = test_dir_img.split('/')[0]
