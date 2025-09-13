@@ -11,6 +11,8 @@ Thank you very much for your attention. We will continue to provide updates...
 
 If you use our dataset or method, we would appreciate your citation:
 
+
+```
 @article{ma2025stamf,
   title={STAMF: Synergistic transformer and mamba fusion network for RGB-Polarization based underwater salient object detection},
   author={Ma, Qianwen and Li, Xiaobo and Li, Bincheng and Zhu, Zhen and Wu, Jing and Huang, Feng and Hu, Haofeng},
@@ -19,3 +21,4 @@ If you use our dataset or method, we would appreciate your citation:
   year={2025},
   publisher={Elsevier}
 }
+```
